@@ -23,6 +23,7 @@ defaults:
     shell: bash
 
 env:
+  TEST_PAYLOAD: ".github/workflows/support/scripts/payload.sh"
   TEST_SCRIPT: ".github/workflows/support/scripts/nightly.sh"
   CHECK_ACTIVE: ".github/workflows/support/scripts/loki-logs.sh"
   VERSION_MIRRORNODE : "custom"
@@ -72,6 +73,6 @@ jobs:
         id: call-slack-api
         uses: slackapi/slack-github-action@v1.24.0
         with:
-          payload-file-path: "./support/scripts/payload.json"
+          payload-file-path: "${{ TEST_PAYLOAD }}"
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.PLATFORM_SLACK_TEST_WEBHOOK }}
