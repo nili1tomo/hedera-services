@@ -23,7 +23,7 @@ defaults:
     shell: bash
 
 env:
-  TEST_PAYLOAD: ".github/workflows/support/scripts/payload.sh"
+  TEST_PAYLOAD: ".github/workflows/support/scripts/payload.json"
   TEST_SCRIPT: ".github/workflows/support/scripts/nightly.sh"
   CHECK_ACTIVE: ".github/workflows/support/scripts/loki-logs.sh"
   VERSION_MIRRORNODE : "custom"
