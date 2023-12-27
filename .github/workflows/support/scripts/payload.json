@@ -1,4 +1,7 @@
 {
+ "attachments": [
+  {
+    "color": "#b7f350",
 	"blocks": [
 		{
 			"type": "header",
@@ -149,4 +152,6 @@
 			]
 		}
 	]
+  }
+ ]
 }
