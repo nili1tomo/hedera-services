@@ -28,7 +28,7 @@
                           },
                           {
                             "type": "mrkdwn",
-                            "text": "<*2024-01-28 01:32:59 - 2024-01-28 02:03:22*|https://preproduction.grafana.hedera-ops.com/d/network-details-prom/network-details-prometheus?orgId=1&from=1706405579033&to=1706407402845&var-Datasource=grafanacloud-prom&var-Network=performance6>"
+                            "text": "<https://preproduction.grafana.hedera-ops.com/d/network-details-prom/network-details-prometheus?orgId=1&from=1706405579033&to=1706407402845&var-Datasource=grafanacloud-prom&var-Network=performance6|*2024-01-28 01:32:59 - 2024-01-28 02:03:22*>"
                           },
                           {
                             "type": "mrkdwn",
@@ -36,7 +36,7 @@
                           },
                           {
                             "type": "mrkdwn",
-                            "text": "<*2024-01-28 02:29:53 - 2024-01-28 03:00:26*|https://preproduction.grafana.hedera-ops.com/d/network-details-prom/network-details-prometheus?orgId=1&from=1706408993481&to=1706410826284&var-Datasource=grafanacloud-prom&var-Network=performance6>"
+                            "text": "<https://preproduction.grafana.hedera-ops.com/d/network-details-prom/network-details-prometheus?orgId=1&from=1706408993481&to=1706410826284&var-Datasource=grafanacloud-prom&var-Network=performance6|*2024-01-28 02:29:53 - 2024-01-28 03:00:26*>"
                           },
                           {
                             "type": "mrkdwn",
@@ -44,7 +44,7 @@
                           },
                           {
                             "type": "mrkdwn",
-                            "text": "<*2024-01-28 03:37:12 - 2024-01-28 04:39:26*|https://preproduction.grafana.hedera-ops.com/d/network-details-prom/network-details-prometheus?orgId=1&from=1706413032488&to=1706416766616&var-Datasource=grafanacloud-prom&var-Network=performance6>"
+                            "text": "<https://preproduction.grafana.hedera-ops.com/d/network-details-prom/network-details-prometheus?orgId=1&from=1706413032488&to=1706416766616&var-Datasource=grafanacloud-prom&var-Network=performance6|*2024-01-28 03:37:12 - 2024-01-28 04:39:26*>"
                           }
                         ]
                       }
