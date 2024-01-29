@@ -20,7 +20,7 @@
                           },
                           {
                             "type": "mrkdwn",
-                            "text": "*Dashboard*"
+                            "text": "*Duration/Dashboard Link*"
                           },
                           {
                             "type": "mrkdwn",
