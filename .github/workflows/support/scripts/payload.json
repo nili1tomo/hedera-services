@@ -7,7 +7,7 @@
                         "type": "header",
                         "text": {
                           "type": "plain_text",
-                          "text": ":dvd: Node Software Release v${{ needs.validate.outputs.version }}",
+                          "text": "Performance Nightly Test(c7c823e0)",
                           "emoji": true
                         }
                       },
@@ -16,31 +16,35 @@
                         "fields": [
                           {
                             "type": "mrkdwn",
-                            "text": "*Deployment Channel:*"
+                            "text": "*Test*"
                           },
                           {
                             "type": "mrkdwn",
-                            "text": "*Deployment Status Check:*"
+                            "text": "*Duration/Dashboard Link*"
                           },
                           {
                             "type": "mrkdwn",
-                            "text": "${{ steps.parameters.outputs.artifact-registry }}"
+                            "text": "*Crypto200 TLS*"
                           },
                           {
                             "type": "mrkdwn",
-                            "text": "<${{ steps.parameters.outputs.artifact-url }}|${{ steps.parameters.outputs.artifact-name }}>"
-                          }
-                        ]
-                      }
-                      {
-                        "type": "divider"
-                      },
-                      {
-                        "type": "context",
-                        "elements": [
+                            "text": "<https://preproduction.grafana.hedera-ops.com/d/network-details-prom/network-details-prometheus?orgId=1&from=1706405579033&to=1706407402845&var-Datasource=grafanacloud-prom&var-Network=performance6|*2024-01-28 01:32:59 - 2024-01-28 02:03:22*>"
+                          },
                           {
                             "type": "mrkdwn",
-                            "text": ":warning: Artifacts may not be immediately available in Maven Central. Please verify existence of the artifacts using the link provided above."
+                            "text": "*Mix2K TLS*"
+                          },
+                          {
+                            "type": "mrkdwn",
+                            "text": "<https://preproduction.grafana.hedera-ops.com/d/network-details-prom/network-details-prometheus?orgId=1&from=1706408993481&to=1706410826284&var-Datasource=grafanacloud-prom&var-Network=performance6|*2024-01-28 02:29:53 - 2024-01-28 03:00:26*>"
+                          },
+                          {
+                            "type": "mrkdwn",
+                            "text": "*Smartcontract/Mixed(333) TLS*"
+                          },
+                          {
+                            "type": "mrkdwn",
+                            "text": "<https://preproduction.grafana.hedera-ops.com/d/network-details-prom/network-details-prometheus?orgId=1&from=1706413032488&to=1706416766616&var-Datasource=grafanacloud-prom&var-Network=performance6|*2024-01-28 03:37:12 - 2024-01-28 04:39:26*>"
                           }
                         ]
                       }
@@ -48,3 +52,4 @@
                   }
                 ]
               }
+
