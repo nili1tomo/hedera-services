@@ -1,230 +1,50 @@
-{
- "attachments": [
-  {
-    "color": "#b7f350",
-	"blocks": [
-		{
-			"type": "header",
-			"text": {
-				"type": "plain_text",
-				"text": "Nightly Performance Test Summary:white_check_mark:",
-				"emoji": true
-			}
-		},
-		{
-			"type": "divider"
-		},
-		{
-			"type": "section",
-			"text": {
-				"type": "mrkdwn",
-				"text": "**Crypto200**\nCrypto transfer test at TPS 200\n*<https://preproduction.grafana.hedera-ops.com/d/network-details-prom/network-details-prometheus?orgId=1&from=1705973570167&to=1705975394302&var-Datasource=grafanacloud-prom&var-Network=performance6|Grafana Dashboard>*\n"
-			},
-			"accessory": {
-				"type": "image",
-				"image_url": "https://files.slack.com/files-pri/T035PD799T9-F06C10LH9G9/pass.png",
-				"alt_text": "PASS"
-			}
-		},
-		{
-			"type": "divider"
-		},
-		{
-			"type": "section",
-			"text": {
-				"type": "mrkdwn",
-				"text": "**Mix2K**\nMix transfer test at TPS 2K\n*<https://preproduction.grafana.hedera-ops.com/d/network-details-prom/network-details-prometheus?orgId=1&from=1705976986607&to=1705978819943&var-Datasource=grafanacloud-prom&var-Network=performance6|Grafana Dashboard>*\n"
-			},
-			"accessory": {
-				"type": "image",
-				"image_url": "https://files.slack.com/files-pri/T035PD799T9-F06C10LH9G9/pass.png",
-				"alt_text": "PASS"
-			}
-		},
-		{
-			"type": "divider"
-		},
-		{
-			"type": "section",
-			"text": {
-				"type": "mrkdwn",
-				"text": "**104K15M333**\nSmartcontract Test with mixed 10K transfer test\n*<https://preproduction.grafana.hedera-ops.com/d/network-details-prom/network-details-prometheus?orgId=1&from=1705981027987&to=1705984764840&var-Datasource=grafanacloud-prom&var-Network=performance6|Grafana Dashboard>*\n"
-			},
-			"accessory": {
-				"type": "image",
-				"image_url": "https://files.slack.com/files-pri/T035PD799T9-F06C10LH9G9/pass.png",
-				"alt_text": "PASS"
-			}
-		},
-		{
-			"type": "divider"
-		},
-		{
-			"type": "section",
-			"text": {
-				"type": "mrkdwn",
-				"text": "**104KCrypto**\nCrypto transfer Test at 10K TPS\n*<https://preproduction.grafana.hedera-ops.com/d/network-details-prom/network-details-prometheus?orgId=1&from=1705987380552&to=1705991005759&var-Datasource=grafanacloud-prom&var-Network=performance6|Grafana Dashboard>*\n"
-			},
-			"accessory": {
-				"type": "image",
-				"image_url": "https://files.slack.com/files-pri/T035PD799T9-F06C10LH9G9/pass.png",
-				"alt_text": "PASS"
-			}
-		},
-		{
-			"type": "divider"
-		},
-		{
-			"type": "section",
-			"text": {
-				"type": "mrkdwn",
-				"text": "**104KHCS**\nHCS Test at 10K TPS\n*<https://preproduction.grafana.hedera-ops.com/d/network-details-prom/network-details-prometheus?orgId=1&from=1705993498386&to=1705997140194&var-Datasource=grafanacloud-prom&var-Network=performance6|Grafana Dashboard>*\n"
-			},
-			"accessory": {
-				"type": "image",
-				"image_url": "https://files.slack.com/files-pri/T035PD799T9-F06C10LH9G9/pass.png",
-				"alt_text": "PASS"
-			}
-		},
-		{
-			"type": "divider"
-		},
-		{
-			"type": "section",
-			"text": {
-				"type": "mrkdwn",
-				"text": "**104KHTS**\nHTS transfer test at 10K TPS\n*<https://preproduction.grafana.hedera-ops.com/d/network-details-prom/network-details-prometheus?orgId=1&from=1705999656882&to=1706003281460&var-Datasource=grafanacloud-prom&var-Network=performance6|Grafana Dashboard>*\n"
-			},
-			"accessory": {
-				"type": "image",
-				"image_url": "https://files.slack.com/files-pri/T035PD799T9-F06C10LH9G9/pass.png",
-				"alt_text": "PASS"
-			}
-		},
-		{
-			"type": "divider"
-		},
-		{
-			"type": "section",
-			"text": {
-				"type": "mrkdwn",
-				"text": "**104K225**\nMixed 10K test with 25/25/50 ratio for Crypto/HTS/HCS types\n*<https://preproduction.grafana.hedera-ops.com/d/network-details-prom/network-details-prometheus?orgId=1&from=1706005774745&to=1706009502477&var-Datasource=grafanacloud-prom&var-Network=performance6|Grafana Dashboard>*\n"
-			},
-			"accessory": {
-				"type": "image",
-				"image_url": "https://files.slack.com/files-pri/T035PD799T9-F06C10LH9G9/pass.png",
-				"alt_text": "PASS"
-			}
-		},
-		{
-			"type": "divider"
-		},
-		{
-			"type": "section",
-			"text": {
-				"type": "mrkdwn",
-				"text": "**104K333**\nMixed 10K test with 33/33/33 ratio for Crypto/HTS/HCS types\n*<https://preproduction.grafana.hedera-ops.com/d/network-details-prom/network-details-prometheus?orgId=1&from=1706012104333&to=1706015831248&var-Datasource=grafanacloud-prom&var-Network=performance6|Grafana Dashboard>*\n"
-			},
-			"accessory": {
-				"type": "image",
-				"image_url": "https://files.slack.com/files-pri/T035PD799T9-F06C10LH9G9/pass.png",
-				"alt_text": "PASS"
-			}
-		},
-		{
-			"type": "divider"
-		},
-		{
-			"type": "section",
-			"text": {
-				"type": "mrkdwn",
-				"text": "**nft**\n10K NFT transfer test\n*<https://preproduction.grafana.hedera-ops.com/d/network-details-prom/network-details-prometheus?orgId=1&from=1706018432683&to=1706022073506&var-Datasource=grafanacloud-prom&var-Network=performance6|Grafana Dashboard>*\n"
-			},
-			"accessory": {
-				"type": "image",
-				"image_url": "https://files.slack.com/files-pri/T035PD799T9-F06C10LH9G9/pass.png",
-				"alt_text": "PASS"
-			}
-		},
-		{
-			"type": "divider"
-		},
-		{
-			"type": "section",
-			"text": {
-				"type": "mrkdwn",
-				"text": "**104k15m333-tls**\nSmartcontract Test with mixed 10K transfer test via TLS port\n*<https://preproduction.grafana.hedera-ops.com/d/network-details-prom/network-details-prometheus?orgId=1&from=1706024590834&to=1706028329228&var-Datasource=grafanacloud-prom&var-Network=performance6|Grafana Dashboard>*\n"
-			},
-			"accessory": {
-				"type": "image",
-				"image_url": "https://files.slack.com/files-pri/T035PD799T9-F06C10LH9G9/pass.png",
-				"alt_text": "PASS"
-			}
-		},
-		{
-			"type": "divider"
-		},
-		{
-			"type": "section",
-			"text": {
-				"type": "mrkdwn",
-				"text": "**104KCrypto-tls**\nCrypto transfer Test at 10K TPS via TLS port\n*<https://preproduction.grafana.hedera-ops.com/d/network-details-prom/network-details-prometheus?orgId=1&from=1706030947858&to=1706034573342&var-Datasource=grafanacloud-prom&var-Network=performance6|Grafana Dashboard>*\n"
-			},
-			"accessory": {
-				"type": "image",
-				"image_url": "https://files.slack.com/files-pri/T035PD799T9-F06C10LH9G9/pass.png",
-				"alt_text": "PASS"
-			}
-		},
-		{
-			"type": "divider"
-		},
-		{
-			"type": "section",
-			"text": {
-				"type": "mrkdwn",
-				"text": "**104KHCS-tls**\nHCS submit Test at 10K TPS via TLS port\n*<https://preproduction.grafana.hedera-ops.com/d/network-details-prom/network-details-prometheus?orgId=1&from=1706037066974&to=1706040710567&var-Datasource=grafanacloud-prom&var-Network=performance6|Grafana Dashboard>*\n"
-			},
-			"accessory": {
-				"type": "image",
-				"image_url": "https://files.slack.com/files-pri/T035PD799T9-F06C10LH9G9/pass.png",
-				"alt_text": "PASS"
-			}
-		},
-		{
-			"type": "divider"
-		},
-		{
-			"type": "section",
-			"text": {
-				"type": "mrkdwn",
-				"text": "**104K225-tls**\nMixed 10K test with 25/25/50 ratio for Crypto/HTS/HCS types via TLS port\n*<https://preproduction.grafana.hedera-ops.com/d/network-details-prom/network-details-prometheus?orgId=1&from=1706043229159&to=1706046958983&var-Datasource=grafanacloud-prom&var-Network=performance6|Grafana Dashboard>*\n"
-			},
-			"accessory": {
-				"type": "image",
-				"image_url": "https://files.slack.com/files-pri/T035PD799T9-F06C10LH9G9/pass.png",
-				"alt_text": "PASS"
-			}
-		},
-		{
-			"type": "divider"
-		},
-		{
-			"type": "actions",
-			"elements": [
-				{
-					"type": "button",
-					"text": {
-						"type": "plain_text",
-						"emoji": true,
-						"text": "Next 2 Results"
-					},
-					"value": "click_me_123"
-				}
-			]
-		}
-	]
-  }
- ]
-}
-
+            {
+              "attachments": [
+                  {
+                    "color": "#b7f350",
+                    "blocks": [
+                      {
+                        "type": "header",
+                        "text": {
+                          "type": "plain_text",
+                          "text": ":dvd: Node Software Release v${{ needs.validate.outputs.version }}",
+                          "emoji": true
+                        }
+                      },
+                      {
+                        "type": "section",
+                        "fields": [
+                          {
+                            "type": "mrkdwn",
+                            "text": "*Deployment Channel:*"
+                          },
+                          {
+                            "type": "mrkdwn",
+                            "text": "*Deployment Status Check:*"
+                          },
+                          {
+                            "type": "mrkdwn",
+                            "text": "${{ steps.parameters.outputs.artifact-registry }}"
+                          },
+                          {
+                            "type": "mrkdwn",
+                            "text": "<${{ steps.parameters.outputs.artifact-url }}|${{ steps.parameters.outputs.artifact-name }}>"
+                          }
+                        ]
+                      }
+                      {
+                        "type": "divider"
+                      },
+                      {
+                        "type": "context",
+                        "elements": [
+                          {
+                            "type": "mrkdwn",
+                            "text": ":warning: Artifacts may not be immediately available in Maven Central. Please verify existence of the artifacts using the link provided above."
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
