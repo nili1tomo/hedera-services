@@ -61,14 +61,6 @@
                           {
                             "type": "mrkdwn",
                             "text": "<https://preproduction.grafana.hedera-ops.com/d/network-details-prom/network-details-prometheus?orgId=1TEST_DASHBOARD_URLfrom=1707807888958TEST_DASHBOARD_URLto=1707811529913TEST_DASHBOARD_URLvar-Datasource=grafanacloud-promTEST_DASHBOARD_URLvar-Network=performance6|*2024-02-13 07:04:48 - 2024-02-13 08:05:29*>"
-                          },
-                          {
-                            "type": "mrkdwn",
-                            "text": "*hts-tls*"
-                          },
-                          {
-                            "type": "mrkdwn",
-                            "text": "<https://preproduction.grafana.hedera-ops.com/d/network-details-prom/network-details-prometheus?orgId=1TEST_DASHBOARD_URLfrom=1707814049588TEST_DASHBOARD_URLto=1707817674039TEST_DASHBOARD_URLvar-Datasource=grafanacloud-promTEST_DASHBOARD_URLvar-Network=performance6|*2024-02-13 08:47:29 - 2024-02-13 09:47:54*>"
                           }
                         ]
                       }
