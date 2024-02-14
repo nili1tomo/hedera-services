@@ -117,7 +117,8 @@
                           {
                             "type": "mrkdwn",
                             "text": "<https://preproduction.grafana.hedera-ops.com/d/network-details-prom/network-details-prometheus?orgId=1TEST_DASHBOARD_URLfrom=1707851272260TEST_DASHBOARD_URLto=1707855011855TEST_DASHBOARD_URLvar-Datasource=grafanacloud-promTEST_DASHBOARD_URLvar-Network=performance6|*2024-02-13 19:07:52 - 2024-02-13 20:10:11*>"
-                          }                        ]
+                          }                        
+                        ]
                       }
                     ]
                   }
