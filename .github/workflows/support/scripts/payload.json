@@ -95,7 +95,12 @@
                           {
                             "type": "mrkdwn",
                             "text": "<https://preproduction.grafana.hedera-ops.com/d/network-details-prom/network-details-prometheus?orgId=1TEST_DASHBOARD_URLfrom=1707826493842TEST_DASHBOARD_URLto=1707830220843TEST_DASHBOARD_URLvar-Datasource=grafanacloud-promTEST_DASHBOARD_URLvar-Network=performance6|*2024-02-13 12:14:53 - 2024-02-13 13:17:00*>"
-                          },
+                          }
+                        ]
+                      },
+                      {
+                        "type": "section",
+                        "fields": [
                           {
                             "type": "mrkdwn",
                             "text": "*nft-tls*"
@@ -103,12 +108,7 @@
                           {
                             "type": "mrkdwn",
                             "text": "<https://preproduction.grafana.hedera-ops.com/d/network-details-prom/network-details-prometheus?orgId=1TEST_DASHBOARD_URLfrom=1707832824697TEST_DASHBOARD_URLto=1707836466092TEST_DASHBOARD_URLvar-Datasource=grafanacloud-promTEST_DASHBOARD_URLvar-Network=performance6|*2024-02-13 14:00:24 - 2024-02-13 15:01:06*>"
-                          }
-                        ]
-                      },
-                      {
-                        "type": "section",
-                        "fields": [
+                          },
                           {
                             "type": "mrkdwn",
                             "text": "*crypto*"
