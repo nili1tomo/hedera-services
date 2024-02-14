@@ -24,11 +24,11 @@
                           },
                           {
                             "type": "mrkdwn",
-                            "text": "*Crypto200 TLS*"
+                            "text": "*crypto200-tls*"
                           },
                           {
                             "type": "mrkdwn",
-                            "text": "<https://preproduction.grafana.hedera-ops.com/d/network-details-prom/network-details-prometheus?orgId=1&from=1706405579033&to=1706407402845&var-Datasource=grafanacloud-prom&var-Network=performance6|*2024-01-28 01:32:59 - 2024-01-28 02:03:22*>"
+                            "text": "<https://preproduction.grafana.hedera-ops.com/d/network-details-prom/network-details-prometheus?orgId=1TEST_DASHBOARD_URLfrom=1707787960240TEST_DASHBOARD_URLto=1707789783078TEST_DASHBOARD_URLvar-Datasource=grafanacloud-promTEST_DASHBOARD_URLvar-Network=performance6|*2024-02-13 01:32:40 - 2024-02-13 02:03:03*>"
                           },
                           {
                             "type": "mrkdwn",
