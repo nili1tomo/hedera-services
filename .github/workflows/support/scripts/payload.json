@@ -21,7 +21,12 @@
                           {
                             "type": "mrkdwn",
                             "text": "*Duration/Dashboard Link*"
-                          },
+                          }
+                        ]
+                      },
+                      {
+                        "type": "section",
+                        "fields": [
                           {
                             "type": "mrkdwn",
                             "text": "*crypto200-tls*"
