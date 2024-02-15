@@ -60,6 +60,7 @@ import com.swirlds.platform.internal.EventImpl;
 import com.swirlds.platform.state.SwirldStateManager;
 import com.swirlds.platform.state.iss.IssDetector;
 import com.swirlds.platform.state.nexus.LatestCompleteStateNexus;
+import com.swirlds.platform.state.nexus.SignedStateNexus;
 import com.swirlds.platform.state.signed.ReservedSignedState;
 import com.swirlds.platform.state.signed.SignedStateFileManager;
 import com.swirlds.platform.state.signed.StateDumpRequest;
@@ -75,6 +76,8 @@ import com.swirlds.platform.wiring.components.EventWindowManagerWiring;
 import com.swirlds.platform.wiring.components.FutureEventBufferWiring;
 import com.swirlds.platform.wiring.components.GossipWiring;
 import com.swirlds.platform.wiring.components.IssDetectorWiring;
+import com.swirlds.platform.wiring.components.LatestCompleteStateNexusWiring;
+import com.swirlds.platform.wiring.components.LatestImmutableStateNexusWiring;
 import com.swirlds.platform.wiring.components.PcesReplayerWiring;
 import com.swirlds.platform.wiring.components.PcesSequencerWiring;
 import com.swirlds.platform.wiring.components.PcesWriterWiring;
@@ -124,6 +127,8 @@ public class PlatformWiring implements Startable, Stoppable, Clearable {
     private final EventStreamManagerWiring eventStreamManagerWiring;
     private final RunningHashUpdaterWiring runningHashUpdaterWiring;
     private final IssDetectorWiring issDetectorWiring;
+    private final LatestImmutableStateNexusWiring latestImmutableStateNexusWiring;
+    private final LatestCompleteStateNexusWiring latestCompleteStateNexusWiring;
 
     private final PlatformCoordinator platformCoordinator;
 
@@ -208,6 +213,8 @@ public class PlatformWiring implements Startable, Stoppable, Clearable {
         eventWindowManagerWiring = EventWindowManagerWiring.create(model);
 
         issDetectorWiring = IssDetectorWiring.create(model, schedulers.issDetectorScheduler());
+        latestImmutableStateNexusWiring = LatestImmutableStateNexusWiring.create(schedulers.latestImmutableStateNexusScheduler());
+        latestCompleteStateNexusWiring = LatestCompleteStateNexusWiring.create(schedulers.latestCompleteStateNexusScheduler());
         wire();
     }
 
@@ -299,6 +306,11 @@ public class PlatformWiring implements Startable, Stoppable, Clearable {
                 .runningHashUpdateOutput()
                 .solderTo(consensusRoundHandlerWiring.runningHashUpdateInput());
         runningHashUpdaterWiring.runningHashUpdateOutput().solderTo(eventStreamManagerWiring.runningHashUpdateInput());
+
+        consensusRoundHandlerWiring.reservedSignedStateOutput().solderTo(latestImmutableStateNexusWiring.setStateInput());
+        consensusRoundHandlerWiring.roundNumberOutput().solderTo(latestCompleteStateNexusWiring.incompleteStateRoundNumberInput());
+
+        stateSignatureCollectorWiring.getCompleteStatesOutput().solderTo(latestCompleteStateNexusWiring.reservedSignedStateInput());
     }
 
     /**
@@ -314,8 +326,7 @@ public class PlatformWiring implements Startable, Stoppable, Clearable {
     public void wireExternalComponents(
             @NonNull final PlatformStatusManager statusManager,
             @NonNull final AppCommunicationComponent appCommunicationComponent,
-            @NonNull final TransactionPool transactionPool,
-            @NonNull final LatestCompleteStateNexus latestCompleteStateNexus) {
+            @NonNull final TransactionPool transactionPool) {
 
         signedStateFileManagerWiring
                 .stateWrittenToDiskOutputWire()
@@ -328,9 +339,6 @@ public class PlatformWiring implements Startable, Stoppable, Clearable {
         stateSignatureCollectorWiring
                 .getCompleteStatesOutput()
                 .solderTo("app comm", appCommunicationComponent::newLatestCompleteStateEvent);
-        stateSignatureCollectorWiring
-                .getCompleteStatesOutput()
-                .solderTo("latestCompleteStateNexus", latestCompleteStateNexus::setStateIfNewer);
     }
 
     /**
@@ -379,7 +387,9 @@ public class PlatformWiring implements Startable, Stoppable, Clearable {
             @NonNull final ConsensusRoundHandler consensusRoundHandler,
             @NonNull final EventStreamManager<EventImpl> eventStreamManager,
             @NonNull final FutureEventBuffer futureEventBuffer,
-            @NonNull final IssDetector issDetector) {
+            @NonNull final IssDetector issDetector,
+            @NonNull final SignedStateNexus latestImmutableStateNexus,
+            @NonNull final LatestCompleteStateNexus latestCompleteStateNexus) {
 
         eventHasherWiring.bind(eventHasher);
         internalEventValidatorWiring.bind(internalEventValidator);
@@ -402,6 +412,8 @@ public class PlatformWiring implements Startable, Stoppable, Clearable {
         eventStreamManagerWiring.bind(eventStreamManager);
         futureEventBufferWiring.bind(futureEventBuffer);
         issDetectorWiring.bind(issDetector);
+        latestImmutableStateNexusWiring.bind(latestImmutableStateNexus);
+        latestCompleteStateNexusWiring.bind(latestCompleteStateNexus);
     }
 
     /**

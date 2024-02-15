@@ -20,22 +20,29 @@ import com.swirlds.common.stream.RunningEventHashUpdate;
 import com.swirlds.common.wiring.schedulers.TaskScheduler;
 import com.swirlds.common.wiring.wires.input.BindableInputWire;
 import com.swirlds.common.wiring.wires.input.InputWire;
+import com.swirlds.common.wiring.wires.output.OutputWire;
 import com.swirlds.platform.eventhandling.ConsensusRoundHandler;
 import com.swirlds.platform.internal.ConsensusRound;
+import com.swirlds.platform.state.signed.ReservedSignedState;
+import com.swirlds.platform.wiring.SignedStateReserver;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * Wiring for the {@link com.swirlds.platform.eventhandling.ConsensusRoundHandler}
  *
- * @param roundInput              the input wire for consensus rounds to be applied to the state
- * @param runningHashUpdateInput  the input wire for updating the running event hash
- * @param flushRunnable           the runnable to flush the task scheduler
- * @param startSquelchingRunnable the runnable to start squelching
- * @param stopSquelchingRunnable  the runnable to stop squelching
+ * @param roundInput                the input wire for consensus rounds to be applied to the state
+ * @param runningHashUpdateInput    the input wire for updating the running event hash
+ * @param reservedSignedStateOutput the output wire for newly created reserved signed states
+ * @param roundNumberOutput         the output wire for the round number of newly created reserved signed states
+ * @param flushRunnable             the runnable to flush the task scheduler
+ * @param startSquelchingRunnable   the runnable to start squelching
+ * @param stopSquelchingRunnable    the runnable to stop squelching
  */
 public record ConsensusRoundHandlerWiring(
         @NonNull InputWire<ConsensusRound> roundInput,
         @NonNull InputWire<RunningEventHashUpdate> runningHashUpdateInput,
+        @NonNull OutputWire<ReservedSignedState> reservedSignedStateOutput,
+        @NonNull OutputWire<Long> roundNumberOutput,
         @NonNull Runnable flushRunnable,
         @NonNull Runnable startSquelchingRunnable,
         @NonNull Runnable stopSquelchingRunnable) {
@@ -46,10 +53,20 @@ public record ConsensusRoundHandlerWiring(
      * @return the new wiring instance
      */
     @NonNull
-    public static ConsensusRoundHandlerWiring create(@NonNull final TaskScheduler<Void> taskScheduler) {
+    public static ConsensusRoundHandlerWiring create(@NonNull final TaskScheduler<ReservedSignedState> taskScheduler) {
+        final OutputWire<ReservedSignedState> stateOutputWire = taskScheduler.getOutputWire()
+                .buildAdvancedTransformer(new SignedStateReserver("newReservedSignedState"));
+
+        final OutputWire<Long> roundOutputWire = taskScheduler.getOutputWire().buildTransformer(
+                "getRound",
+                "reservedSignedState",
+                reservedSignedState -> reservedSignedState.get().getRound());
+
         return new ConsensusRoundHandlerWiring(
                 taskScheduler.buildInputWire("rounds"),
                 taskScheduler.buildInputWire("running hash update"),
+                stateOutputWire,
+                roundOutputWire,
                 taskScheduler::flush,
                 taskScheduler::startSquelching,
                 taskScheduler::stopSquelching);
@@ -61,7 +78,7 @@ public record ConsensusRoundHandlerWiring(
      * @param consensusRoundHandler the consensus round handler to bind
      */
     public void bind(@NonNull final ConsensusRoundHandler consensusRoundHandler) {
-        ((BindableInputWire<ConsensusRound, Void>) roundInput).bind(consensusRoundHandler::handleConsensusRound);
+        ((BindableInputWire<ConsensusRound, ReservedSignedState>) roundInput).bind(consensusRoundHandler::handleConsensusRound);
         ((BindableInputWire<RunningEventHashUpdate, Void>) runningHashUpdateInput)
                 .bind(consensusRoundHandler::updateRunningHash);
     }

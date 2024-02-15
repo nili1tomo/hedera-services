@@ -16,23 +16,25 @@
 
 package com.swirlds.platform.state.nexus;
 
-import static com.swirlds.metrics.api.Metrics.PLATFORM_CATEGORY;
-
 import com.swirlds.common.metrics.RunningAverageMetric;
 import com.swirlds.metrics.api.Metrics;
 import com.swirlds.platform.config.StateConfig;
 import com.swirlds.platform.consensus.ConsensusConstants;
 import com.swirlds.platform.state.signed.ReservedSignedState;
+import com.swirlds.platform.wiring.ClearTrigger;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+
 import java.util.Objects;
+
+import static com.swirlds.metrics.api.Metrics.PLATFORM_CATEGORY;
 
 /**
  * A nexus that holds the latest complete signed state.
  */
-public class LatestCompleteStateNexus implements SignedStateNexus {
+public class LatestCompleteStateNexus {
     private static final RunningAverageMetric.Config AVG_ROUND_SUPERMAJORITY_CONFIG = new RunningAverageMetric.Config(
-                    PLATFORM_CATEGORY, "roundSup")
+            PLATFORM_CATEGORY, "roundSup")
             .withDescription("latest round with state signed by a supermajority")
             .withUnit("round");
 
@@ -53,25 +55,19 @@ public class LatestCompleteStateNexus implements SignedStateNexus {
         metrics.addUpdater(() -> avgRoundSupermajority.update(getRound()));
     }
 
-    @Override
-    public synchronized void setState(@Nullable final ReservedSignedState reservedSignedState) {
-        if (currentState != null) {
-            currentState.close();
-        }
-        currentState = reservedSignedState;
-    }
-
     /**
      * Replace the current state with the given state if the given state is newer than the current state.
+     *
      * @param reservedSignedState the new state
      */
-    public synchronized void setStateIfNewer(@Nullable final ReservedSignedState reservedSignedState) {
-        if (reservedSignedState == null) {
-            return;
-        }
+    public synchronized void setStateIfNewer(@NonNull final ReservedSignedState reservedSignedState) {
         if (reservedSignedState.isNotNull()
                 && getRound() < reservedSignedState.get().getRound()) {
-            setState(reservedSignedState);
+
+            if (currentState != null) {
+                currentState.close();
+            }
+            currentState = reservedSignedState;
         } else {
             reservedSignedState.close();
         }
@@ -94,12 +90,15 @@ public class LatestCompleteStateNexus implements SignedStateNexus {
         // Is the latest complete round older than the earliest permitted round?
         if (getRound() < earliestPermittedRound) {
             // Yes, so remove it
-            clear();
+            if (currentState != null) {
+                currentState.close();
+            }
+
+            currentState = null;
         }
     }
 
     @Nullable
-    @Override
     public synchronized ReservedSignedState getState(@NonNull final String reason) {
         if (currentState == null) {
             return null;
@@ -107,7 +106,6 @@ public class LatestCompleteStateNexus implements SignedStateNexus {
         return currentState.tryGetAndReserve(reason);
     }
 
-    @Override
     public synchronized long getRound() {
         if (currentState == null) {
             return ConsensusConstants.ROUND_UNDEFINED;

@@ -47,9 +47,6 @@ import com.swirlds.common.platform.NodeId;
 import com.swirlds.common.scratchpad.Scratchpad;
 import com.swirlds.common.stream.EventStreamManager;
 import com.swirlds.common.stream.RunningEventHashUpdate;
-import com.swirlds.common.threading.framework.QueueThread;
-import com.swirlds.common.threading.framework.config.QueueThreadConfiguration;
-import com.swirlds.common.threading.framework.config.QueueThreadMetricsConfiguration;
 import com.swirlds.common.threading.interrupt.InterruptableConsumer;
 import com.swirlds.common.threading.manager.ThreadManager;
 import com.swirlds.common.utility.AutoCloseableWrapper;
@@ -225,11 +222,8 @@ public class SwirldsPlatform implements Platform {
     /**
      * Holds the latest state that is immutable. May be unhashed (in the future), may or may not have all required
      * signatures. State is returned with a reservation.
-     * <p>
-     * NOTE: This is currently set when a state has finished hashing. In the future, this will be set at the moment a
-     * new state is created, before it is hashed.
      */
-    private final SignedStateNexus latestImmutableState = new LockFreeStateNexus();
+    private final SignedStateNexus latestImmutableStateNexus;
 
     private final TransactionPool transactionPool;
     /** Handles all interaction with {@link SwirldState} */
@@ -284,8 +278,6 @@ public class SwirldsPlatform implements Platform {
      * Encapsulated wiring for the platform.
      */
     private final PlatformWiring platformWiring;
-    /** thread-queue responsible for hashing states */
-    private final QueueThread<ReservedSignedState> stateHashSignQueue;
 
     /**
      * the browser gives the Platform what app to run. There can be multiple Platforms on one computer.
@@ -471,8 +463,7 @@ public class SwirldsPlatform implements Platform {
                 swirldName);
 
         transactionPool = new TransactionPool(platformContext);
-        final LatestCompleteStateNexus latestCompleteState =
-                new LatestCompleteStateNexus(stateConfig, platformContext.getMetrics());
+        final LatestCompleteStateNexus latestCompleteStateNexus = new LatestCompleteStateNexus(stateConfig, platformContext.getMetrics());
 
         platformWiring = components.add(new PlatformWiring(platformContext, time));
 
@@ -490,6 +481,8 @@ public class SwirldsPlatform implements Platform {
                 platformWiring.getSignatureCollectorStateInput()::put,
                 signedStateMetrics);
 
+        this.latestImmutableStateNexus = new LockFreeStateNexus();
+
         final EventHasher eventHasher = new EventHasher(platformContext);
         final StateSigner stateSigner = new StateSigner(new PlatformSigner(keysAndCerts), platformStatusManager);
         final PcesReplayer pcesReplayer = new PcesReplayer(
@@ -497,7 +490,7 @@ public class SwirldsPlatform implements Platform {
                 platformWiring.getPcesReplayerEventOutput(),
                 platformWiring::flushIntakePipeline,
                 platformWiring::flushConsensusRoundHandler,
-                () -> latestImmutableState.getState("PCES replay"));
+                () -> latestImmutableStateNexus.getState("PCES replay"));
         final EventDurabilityNexus eventDurabilityNexus = new EventDurabilityNexus();
 
         components.add(stateManagementComponent);
@@ -548,28 +541,19 @@ public class SwirldsPlatform implements Platform {
                 appVersion);
 
         final InterruptableConsumer<ReservedSignedState> newSignedStateFromTransactionsConsumer = rs -> {
-            latestImmutableState.setState(rs.getAndReserve("newSignedStateFromTransactionsConsumer"));
-            latestCompleteState.newIncompleteState(rs.get().getRound());
             savedStateController.markSavedState(rs.getAndReserve("savedStateController.markSavedState"));
+
             stateManagementComponent.newSignedStateFromTransactions(
                     rs.getAndReserve("stateManagementComponent.newSignedStateFromTransactions"));
+
             platformWiring.getIssDetectorWiring().newStateHashed().put(rs.getAndReserve("issDetector"));
+
             rs.close();
         };
-
-        stateHashSignQueue = components.add(new QueueThreadConfiguration<ReservedSignedState>(threadManager)
-                .setNodeId(selfId)
-                .setComponent(PLATFORM_THREAD_POOL_NAME)
-                .setThreadName("state_hash_sign")
-                .setHandler(newSignedStateFromTransactionsConsumer)
-                .setCapacity(1)
-                .setMetricsConfiguration(new QueueThreadMetricsConfiguration(metrics).enableBusyTimeMetric())
-                .build());
 
         final ConsensusRoundHandler consensusRoundHandler = new ConsensusRoundHandler(
                 platformContext,
                 swirldStateManager,
-                stateHashSignQueue,
                 eventDurabilityNexus::waitUntilDurable,
                 platformStatusManager,
                 platformWiring.getIssDetectorWiring().roundCompletedInput()::put,
@@ -614,7 +598,7 @@ public class SwirldsPlatform implements Platform {
                 latestReconnectRound::get);
 
         platformWiring.wireExternalComponents(
-                platformStatusManager, appCommunicationComponent, transactionPool, latestCompleteState);
+                platformStatusManager, appCommunicationComponent, transactionPool);
 
         final FutureEventBuffer futureEventBuffer = new FutureEventBuffer(platformContext);
 
@@ -652,7 +636,9 @@ public class SwirldsPlatform implements Platform {
                 consensusRoundHandler,
                 eventStreamManager,
                 futureEventBuffer,
-                issDetector);
+                issDetector,
+                latestImmutableStateNexus,
+                latestCompleteStateNexus);
 
         // Load the minimum generation into the pre-consensus event writer
         final List<SavedStateInfo> savedStates =
@@ -688,7 +674,7 @@ public class SwirldsPlatform implements Platform {
                 platformWiring.getGossipEventInput()::put,
                 platformWiring.getIntakeQueueSizeSupplier(),
                 swirldStateManager,
-                latestCompleteState,
+                latestCompleteStateNexus,
                 syncMetrics,
                 platformStatusManager,
                 this::loadReconnectState,
@@ -713,7 +699,7 @@ public class SwirldsPlatform implements Platform {
                     initialState.getState().getPlatformState().getMinimumGenerationNonAncient();
             startingRound = initialState.getRound();
 
-            latestImmutableState.setState(initialState.reserve("set latest immutable to initial state"));
+            latestImmutableStateNexus.setState(initialState.reserve("set latest immutable to initial state"));
             stateManagementComponent.stateToLoad(initialState, SourceOfSignedState.DISK);
             savedStateController.registerSignedStateFromDisk(initialState);
 
@@ -740,20 +726,12 @@ public class SwirldsPlatform implements Platform {
             });
         }
 
-        final Clearable clearStateHashSignQueue = () -> {
-            ReservedSignedState signedState = stateHashSignQueue.poll();
-            while (signedState != null) {
-                signedState.close();
-                signedState = stateHashSignQueue.poll();
-            }
-        };
-
         clearAllPipelines = new LoggingClearables(
                 RECONNECT.getMarker(),
                 List.of(
                         Pair.of(platformWiring, "platformWiring"),
                         Pair.of(shadowGraph, "shadowGraph"),
-                        Pair.of(clearStateHashSignQueue, "stateHashSignQueue"),
+                        // TODO: hash queue was cleared here.
                         Pair.of(transactionPool, "transactionPool")));
 
         if (platformContext.getConfiguration().getConfigData(ThreadConfig.class).jvmAnchor()) {
@@ -763,8 +741,8 @@ public class SwirldsPlatform implements Platform {
         // To be removed once the GUI component is better integrated with the platform.
         GuiPlatformAccessor.getInstance().setShadowGraph(selfId, shadowGraph);
         GuiPlatformAccessor.getInstance().setConsensusReference(selfId, consensusRef);
-        GuiPlatformAccessor.getInstance().setLatestCompleteStateComponent(selfId, latestCompleteState);
-        GuiPlatformAccessor.getInstance().setLatestImmutableStateComponent(selfId, latestImmutableState);
+        GuiPlatformAccessor.getInstance().setLatestCompleteStateComponent(selfId, latestCompleteStateNexus);
+        GuiPlatformAccessor.getInstance().setLatestImmutableStateComponent(selfId, latestImmutableStateNexus);
     }
 
     /**
@@ -893,7 +871,7 @@ public class SwirldsPlatform implements Platform {
             // kick off transition to RECONNECT_COMPLETE before beginning to save the reconnect state to disk
             // this guarantees that the platform status will be RECONNECT_COMPLETE before the state is saved
             platformStatusManager.submitStatusAction(new ReconnectCompleteAction(signedState.getRound()));
-            latestImmutableState.setState(signedState.reserve("set latest immutable to reconnect state"));
+            latestImmutableStateNexus.setState(signedState.reserve("set latest immutable to reconnect state"));
             savedStateController.reconnectStateReceived(
                     signedState.reserve("savedStateController.reconnectStateReceived"));
             // this will send the state to the signature collector which will send it to be written to disk.
@@ -973,7 +951,7 @@ public class SwirldsPlatform implements Platform {
         components.start();
 
         replayPreconsensusEvents();
-        try (final ReservedSignedState reservedState = latestImmutableState.getState("Get PCES recovery state")) {
+        try (final ReservedSignedState reservedState = latestImmutableStateNexus.getState("Get PCES recovery state")) {
             if (reservedState == null) {
                 logger.warn(
                         STATE_TO_DISK.getMarker(),
@@ -1015,11 +993,7 @@ public class SwirldsPlatform implements Platform {
 
         // we have to wait for all the PCES transactions to reach the ISS detector before telling it that PCES replay is
         // done the PCES replay will flush the intake pipeline, so we have to flush the hasher
-        try {
-            stateHashSignQueue.waitUntilNotBusy();
-        } catch (final InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        // TODO flush the hasher here
         // FUTURE WORK: once the state hasher is moved to the platform wiring, this flush can be done by the PCES
         // replayer. the same goes for the flush of the state hasher
         platformWiring.getIssDetectorWiring().endOfPcesReplay().put(NoInput.getInstance());
@@ -1077,7 +1051,7 @@ public class SwirldsPlatform implements Platform {
     @Override
     public @NonNull <T extends SwirldState> AutoCloseableWrapper<T> getLatestImmutableState(
             @NonNull final String reason) {
-        final ReservedSignedState wrapper = latestImmutableState.getState(reason);
+        final ReservedSignedState wrapper = latestImmutableStateNexus.getState(reason);
         return wrapper == null
                 ? AutoCloseableWrapper.empty()
                 : new AutoCloseableWrapper<>((T) wrapper.get().getState().getSwirldState(), wrapper::close);

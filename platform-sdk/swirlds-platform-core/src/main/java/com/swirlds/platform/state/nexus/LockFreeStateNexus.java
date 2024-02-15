@@ -18,6 +18,7 @@ package com.swirlds.platform.state.nexus;
 
 import com.swirlds.platform.consensus.ConsensusConstants;
 import com.swirlds.platform.state.signed.ReservedSignedState;
+import com.swirlds.platform.wiring.ClearTrigger;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import java.util.concurrent.atomic.AtomicLong;
@@ -55,12 +56,9 @@ public class LockFreeStateNexus implements SignedStateNexus {
     }
 
     @Override
-    public void setState(@Nullable final ReservedSignedState reservedSignedState) {
+    public void setState(@NonNull final ReservedSignedState reservedSignedState) {
         final ReservedSignedState oldState = currentState.getAndSet(reservedSignedState);
-        currentStateRound.set(
-                reservedSignedState == null
-                        ? ConsensusConstants.ROUND_UNDEFINED
-                        : reservedSignedState.get().getRound());
+        currentStateRound.set(reservedSignedState.get().getRound());
         if (oldState != null) {
             oldState.close();
         }
@@ -69,5 +67,17 @@ public class LockFreeStateNexus implements SignedStateNexus {
     @Override
     public long getRound() {
         return currentStateRound.get();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void clearState(@NonNull final ClearTrigger ignored) {
+        final ReservedSignedState oldState = currentState.getAndSet(null);
+        currentStateRound.set(ConsensusConstants.ROUND_UNDEFINED);
+        if (oldState != null) {
+            oldState.close();
+        }
     }
 }

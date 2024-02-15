@@ -34,9 +34,7 @@ import com.swirlds.common.crypto.DigestType;
 import com.swirlds.common.crypto.Hash;
 import com.swirlds.common.crypto.ImmutableHash;
 import com.swirlds.common.crypto.RunningHash;
-import com.swirlds.common.metrics.RunningAverageMetric;
 import com.swirlds.common.stream.RunningEventHashUpdate;
-import com.swirlds.metrics.api.Metrics;
 import com.swirlds.platform.consensus.ConsensusConfig;
 import com.swirlds.platform.event.GossipEvent;
 import com.swirlds.platform.internal.ConsensusRound;
@@ -52,8 +50,9 @@ import com.swirlds.platform.system.status.StatusActionSubmitter;
 import com.swirlds.platform.system.status.actions.FreezePeriodEnteredAction;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import java.util.Objects;
-import java.util.concurrent.BlockingQueue;
 import java.util.function.Consumer;
+
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -92,11 +91,6 @@ public class ConsensusRoundHandler {
             new RunningHash(new ImmutableHash(new byte[DigestType.SHA_384.digestLength()]));
 
     /**
-     * A queue that accepts signed states for hashing and signature collection.
-     */
-    private final BlockingQueue<ReservedSignedState> stateHashSignQueue;
-
-    /**
      * Enables submitting platform status actions.
      */
     private final StatusActionSubmitter statusActionSubmitter;
@@ -117,18 +111,11 @@ public class ConsensusRoundHandler {
 
     private final PlatformContext platformContext;
 
-    private static final RunningAverageMetric.Config AVG_STATE_TO_HASH_SIGN_DEPTH_CONFIG =
-            new RunningAverageMetric.Config(Metrics.INTERNAL_CATEGORY, "stateToHashSignDepth")
-                    .withDescription("average depth of the stateToHashSign queue (number of SignedStates)")
-                    .withUnit("count");
-
     /**
      * Constructor
      *
      * @param platformContext             contains various platform utilities
      * @param swirldStateManager          the swirld state manager to send events to
-     * @param stateHashSignQueue          the queue thread that handles hashing and collecting signatures of new
-     *                                    self-signed states
      * @param waitForEventDurability      a method that blocks until an event becomes durable
      * @param statusActionSubmitter       enables submitting of platform status actions
      * @param roundAppliedToStateConsumer informs the consensus hash manager that a round has been applied to state
@@ -137,7 +124,6 @@ public class ConsensusRoundHandler {
     public ConsensusRoundHandler(
             @NonNull final PlatformContext platformContext,
             @NonNull final SwirldStateManager swirldStateManager,
-            @NonNull final BlockingQueue<ReservedSignedState> stateHashSignQueue,
             @NonNull final CheckedConsumer<GossipEvent, InterruptedException> waitForEventDurability,
             @NonNull final StatusActionSubmitter statusActionSubmitter,
             @NonNull final Consumer<Long> roundAppliedToStateConsumer,
@@ -145,7 +131,6 @@ public class ConsensusRoundHandler {
 
         this.platformContext = Objects.requireNonNull(platformContext);
         this.swirldStateManager = Objects.requireNonNull(swirldStateManager);
-        this.stateHashSignQueue = Objects.requireNonNull(stateHashSignQueue);
         this.waitForEventDurability = Objects.requireNonNull(waitForEventDurability);
         this.statusActionSubmitter = Objects.requireNonNull(statusActionSubmitter);
         this.roundAppliedToStateConsumer = Objects.requireNonNull(roundAppliedToStateConsumer);
@@ -156,12 +141,6 @@ public class ConsensusRoundHandler {
                 .getConfigData(ConsensusConfig.class)
                 .roundsNonAncient();
         this.handlerMetrics = new RoundHandlingMetrics(platformContext);
-
-        // Future work: This metric should be moved to a suitable component once the stateHashSignQueue is migrated
-        // to the framework
-        final RunningAverageMetric avgStateToHashSignDepth =
-                platformContext.getMetrics().getOrCreate(AVG_STATE_TO_HASH_SIGN_DEPTH_CONFIG);
-        platformContext.getMetrics().addUpdater(() -> avgStateToHashSignDepth.update(stateHashSignQueue.size()));
     }
 
     /**
@@ -182,19 +161,22 @@ public class ConsensusRoundHandler {
      * Applies the transactions in the consensus round to the state
      *
      * @param consensusRound the consensus round to apply
+     *
+     * @return the reserved signed state, or null if no state was created
      */
-    public void handleConsensusRound(@NonNull final ConsensusRound consensusRound) {
+    @Nullable
+    public ReservedSignedState handleConsensusRound(@NonNull final ConsensusRound consensusRound) {
         // consensus rounds with no events are ignored
         if (consensusRound.isEmpty()) {
             // Future work: the long term goal is for empty rounds to not be ignored here. For now, the way that the
             // running hash of consensus events is calculated by the EventStreamManager prevents that from being
             // possible.
-            return;
+            return null;
         }
 
         // Once there is a saved state created in a freeze period, we will never apply any more rounds to the state.
         if (freezeRoundReceived) {
-            return;
+            return null;
         }
 
         if (swirldStateManager.isInFreezePeriod(consensusRound.getConsensusTimestamp())) {
@@ -232,10 +214,12 @@ public class ConsensusRoundHandler {
             handlerMetrics.setPhase(UPDATING_PLATFORM_STATE_RUNNING_HASH);
             updatePlatformStateRunningHash(consensusRound);
 
-            createSignedState();
+            return createReservedSignedState();
         } catch (final InterruptedException e) {
             logger.error(EXCEPTION.getMarker(), "handleConsensusRound interrupted");
             Thread.currentThread().interrupt();
+
+            return null;
         } finally {
             handlerMetrics.setPhase(IDLE);
         }
@@ -282,11 +266,12 @@ public class ConsensusRoundHandler {
     }
 
     /**
-     * Create a signed state
+     * Create a reserved signed state
      *
      * @throws InterruptedException if this thread is interrupted
      */
-    private void createSignedState() throws InterruptedException {
+    @NonNull
+    private ReservedSignedState createReservedSignedState() throws InterruptedException {
         if (freezeRoundReceived) {
             // Let the swirld state manager know we are about to write the saved state for the freeze period
             swirldStateManager.savedStateInFreezePeriod();
@@ -298,6 +283,7 @@ public class ConsensusRoundHandler {
         handlerMetrics.setPhase(CREATING_SIGNED_STATE);
         final SignedState signedState = new SignedState(
                 platformContext, immutableStateCons, "ConsensusRoundHandler.createSignedState()", freezeRoundReceived);
-        stateHashSignQueue.put(signedState.reserve("ConsensusRoundHandler.createSignedState()"));
+
+        return signedState.reserve("ConsensusRoundHandler.createReservedSignedState()");
     }
 }

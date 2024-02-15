@@ -16,17 +16,18 @@
 
 package com.swirlds.platform.state.nexus;
 
-import com.swirlds.common.utility.Clearable;
 import com.swirlds.platform.consensus.ConsensusConstants;
 import com.swirlds.platform.state.signed.ReservedSignedState;
+import com.swirlds.platform.wiring.ClearTrigger;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+
 import java.util.function.Consumer;
 
 /**
  * A thread-safe container that also manages reservations for a single signed state.
  */
-public interface SignedStateNexus extends Consumer<ReservedSignedState>, Clearable {
+public interface SignedStateNexus extends Consumer<ReservedSignedState> {
     /**
      * Returns the current signed state and reserves it. If the current signed state is null, or cannot be reserved,
      * then null is returned.
@@ -42,7 +43,7 @@ public interface SignedStateNexus extends Consumer<ReservedSignedState>, Clearab
      *
      * @param reservedSignedState the new signed state
      */
-    void setState(@Nullable ReservedSignedState reservedSignedState);
+    void setState(@NonNull ReservedSignedState reservedSignedState);
 
     /**
      * Returns the round of the current signed state
@@ -53,18 +54,18 @@ public interface SignedStateNexus extends Consumer<ReservedSignedState>, Clearab
     long getRound();
 
     /**
-     * Same as {@link #setState(ReservedSignedState)} with a null argument
+     * Clears the current signed state and releases it.
+     *
+     * @param ignored a placeholder object, since the wiring framework doesn't support methods with no parameters
      */
-    @Override
-    default void clear() {
-        setState(null);
-    }
+    void clearState(@NonNull ClearTrigger ignored);
 
     /**
      * Same as {@link #setState(ReservedSignedState)}
      */
+    // TODO try removing this
     @Override
-    default void accept(@Nullable final ReservedSignedState reservedSignedState) {
+    default void accept(@NonNull final ReservedSignedState reservedSignedState) {
         setState(reservedSignedState);
     }
 }

@@ -23,6 +23,7 @@ import com.swirlds.platform.gui.GuiPlatformAccessor;
 import com.swirlds.platform.gui.GuiUtils;
 import com.swirlds.platform.gui.components.PrePaintableJPanel;
 import com.swirlds.platform.gui.model.GuiModel;
+import com.swirlds.platform.state.nexus.LatestCompleteStateNexus;
 import com.swirlds.platform.state.nexus.SignedStateNexus;
 import com.swirlds.platform.state.signed.ReservedSignedState;
 import com.swirlds.platform.system.Platform;
@@ -66,7 +67,7 @@ class WinTab2Consensus extends PrePaintableJPanel {
             long r3 = consensus.getMaxRound();
             final SignedStateNexus latestImmutableStateComponent =
                     GuiPlatformAccessor.getInstance().getLatestImmutableStateComponent(platform.getSelfId());
-            final SignedStateNexus latestCompleteStateComponent =
+            final LatestCompleteStateNexus latestCompleteStateComponent =
                     GuiPlatformAccessor.getInstance().getLatestCompleteStateComponent(platform.getSelfId());
             long r0 = latestCompleteStateComponent.getRound();
 
@@ -85,11 +86,15 @@ class WinTab2Consensus extends PrePaintableJPanel {
             s += String.format("\n%,10d = latest round-created (deleted round +%,d)", r3, r3 - r1);
 
             final List<GuiStateInfo> stateInfo = new ArrayList<>();
-            for (final SignedStateNexus nexus : List.of(latestCompleteStateComponent, latestImmutableStateComponent)) {
-                try (final ReservedSignedState state = nexus.getState("GUI")) {
-                    if (state == null) {
-                        continue;
-                    }
+
+            try (final ReservedSignedState state = latestCompleteStateComponent.getState("GUI")) {
+                if (state != null) {
+                    stateInfo.add(GuiStateInfo.from(state));
+                }
+            }
+
+            try (final ReservedSignedState state = latestImmutableStateComponent.getState("GUI")) {
+                if (state != null) {
                     stateInfo.add(GuiStateInfo.from(state));
                 }
             }

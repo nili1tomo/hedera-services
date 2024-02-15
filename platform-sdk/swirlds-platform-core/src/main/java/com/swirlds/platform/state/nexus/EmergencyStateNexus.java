@@ -17,6 +17,7 @@
 package com.swirlds.platform.state.nexus;
 
 import com.swirlds.platform.system.status.PlatformStatus;
+import com.swirlds.platform.wiring.ClearTrigger;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
@@ -30,7 +31,7 @@ public class EmergencyStateNexus extends LockFreeStateNexus {
      */
     public void platformStatusChanged(@NonNull final PlatformStatus status) {
         if (status == PlatformStatus.ACTIVE) {
-            clear();
+            clearState(new ClearTrigger());
         }
     }
 }

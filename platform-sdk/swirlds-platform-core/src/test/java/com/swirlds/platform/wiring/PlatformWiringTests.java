@@ -41,6 +41,8 @@ import com.swirlds.platform.eventhandling.ConsensusRoundHandler;
 import com.swirlds.platform.gossip.shadowgraph.Shadowgraph;
 import com.swirlds.platform.state.SwirldStateManager;
 import com.swirlds.platform.state.iss.IssDetector;
+import com.swirlds.platform.state.nexus.LatestCompleteStateNexus;
+import com.swirlds.platform.state.nexus.SignedStateNexus;
 import com.swirlds.platform.state.signed.SignedStateFileManager;
 import com.swirlds.platform.state.signed.StateSignatureCollector;
 import org.junit.jupiter.api.DisplayName;
@@ -79,7 +81,9 @@ class PlatformWiringTests {
                 mock(ConsensusRoundHandler.class),
                 mock(EventStreamManager.class),
                 mock(FutureEventBuffer.class),
-                mock(IssDetector.class));
+                mock(IssDetector.class),
+                mock(SignedStateNexus.class),
+                mock(LatestCompleteStateNexus.class));
 
         assertFalse(wiring.getModel().checkForUnboundInputWires());
     }

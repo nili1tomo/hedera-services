@@ -99,7 +99,6 @@ class ConsensusRoundHandlerTests {
         final PlatformState platformState = mock(PlatformState.class);
         final SwirldStateManager swirldStateManager = mockSwirldStateManager(platformState);
 
-        final BlockingQueue<ReservedSignedState> stateHashSignQueue = mock(BlockingQueue.class);
         final CheckedConsumer<GossipEvent, InterruptedException> waitForEventDurability = mock(CheckedConsumer.class);
         final StatusActionSubmitter statusActionSubmitter = mock(StatusActionSubmitter.class);
 
@@ -109,7 +108,6 @@ class ConsensusRoundHandlerTests {
         final ConsensusRoundHandler consensusRoundHandler = new ConsensusRoundHandler(
                 platformContext,
                 swirldStateManager,
-                stateHashSignQueue,
                 waitForEventDurability,
                 statusActionSubmitter,
                 roundAppliedToStateConsumer,
@@ -131,7 +129,6 @@ class ConsensusRoundHandlerTests {
         verify(swirldStateManager).handleConsensusRound(consensusRound);
         assertEquals(consensusRoundNumber, roundAppliedToState.get());
         verify(swirldStateManager, never()).savedStateInFreezePeriod();
-        verify(stateHashSignQueue).put(any(ReservedSignedState.class));
         verify(platformState)
                 .setRunningEventHash(
                         events.getLast().getRunningHash().getFutureHash().getAndRethrow());
@@ -146,7 +143,6 @@ class ConsensusRoundHandlerTests {
         final SwirldStateManager swirldStateManager = mockSwirldStateManager(platformState);
         when(swirldStateManager.isInFreezePeriod(any())).thenReturn(true);
 
-        final BlockingQueue<ReservedSignedState> stateHashSignQueue = mock(BlockingQueue.class);
         final CheckedConsumer<GossipEvent, InterruptedException> waitForEventDurability = mock(CheckedConsumer.class);
         final StatusActionSubmitter statusActionSubmitter = mock(StatusActionSubmitter.class);
 
@@ -156,7 +152,6 @@ class ConsensusRoundHandlerTests {
         final ConsensusRoundHandler consensusRoundHandler = new ConsensusRoundHandler(
                 platformContext,
                 swirldStateManager,
-                stateHashSignQueue,
                 waitForEventDurability,
                 statusActionSubmitter,
                 roundAppliedToStateConsumer,
@@ -178,7 +173,6 @@ class ConsensusRoundHandlerTests {
         verify(swirldStateManager).handleConsensusRound(consensusRound);
         assertEquals(consensusRoundNumber, roundAppliedToState.get());
         verify(swirldStateManager).savedStateInFreezePeriod();
-        verify(stateHashSignQueue).put(any(ReservedSignedState.class));
         verify(platformState)
                 .setRunningEventHash(
                         events.getLast().getRunningHash().getFutureHash().getAndRethrow());
@@ -194,7 +188,6 @@ class ConsensusRoundHandlerTests {
         verify(waitForEventDurability).accept(keystoneEvent.getBaseEvent());
         verify(swirldStateManager).handleConsensusRound(consensusRound);
         verify(swirldStateManager).savedStateInFreezePeriod();
-        verify(stateHashSignQueue).put(any(ReservedSignedState.class));
         verify(platformState)
                 .setRunningEventHash(
                         events.getLast().getRunningHash().getFutureHash().getAndRethrow());

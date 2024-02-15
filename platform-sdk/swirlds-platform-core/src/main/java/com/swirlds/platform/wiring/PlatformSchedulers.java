@@ -57,6 +57,8 @@ import java.util.List;
  * @param runningHashUpdateScheduler                the scheduler for the running hash updater
  * @param futureEventBufferScheduler                the scheduler for the future event buffer
  * @param issDetectorScheduler                      the scheduler for the iss detector
+ * @param latestImmutableStateNexusScheduler        the scheduler for the latest immutable state nexus
+ * @param latestCompleteStateNexusScheduler         the scheduler for the latest complete state nexus
  */
 public record PlatformSchedulers(
         @NonNull TaskScheduler<GossipEvent> eventHasherScheduler,
@@ -77,11 +79,13 @@ public record PlatformSchedulers(
         @NonNull TaskScheduler<Void> applicationTransactionPrehandlerScheduler,
         @NonNull TaskScheduler<List<ReservedSignedState>> stateSignatureCollectorScheduler,
         @NonNull TaskScheduler<Void> shadowgraphScheduler,
-        @NonNull TaskScheduler<Void> consensusRoundHandlerScheduler,
+        @NonNull TaskScheduler<ReservedSignedState> consensusRoundHandlerScheduler,
         @NonNull TaskScheduler<Void> eventStreamManagerScheduler,
         @NonNull TaskScheduler<RunningEventHashUpdate> runningHashUpdateScheduler,
         @NonNull TaskScheduler<List<GossipEvent>> futureEventBufferScheduler,
-        @NonNull TaskScheduler<List<IssNotification>> issDetectorScheduler) {
+        @NonNull TaskScheduler<List<IssNotification>> issDetectorScheduler,
+        @NonNull TaskScheduler<Void> latestImmutableStateNexusScheduler,
+        @NonNull TaskScheduler<Void> latestCompleteStateNexusScheduler) {
 
     /**
      * Instantiate the schedulers for the platform, for the given wiring model
@@ -254,6 +258,14 @@ public record PlatformSchedulers(
                         .withType(config.issDetectorSchedulerType())
                         .withUnhandledTaskCapacity(config.issDetectorUnhandledCapacity())
                         .withMetricsBuilder(model.metricsBuilder().withUnhandledTaskMetricEnabled(true))
+                        .build()
+                        .cast(),
+                model.schedulerBuilder("latestImmutableStateNexus")
+                        .withType(TaskSchedulerType.DIRECT)
+                        .build()
+                        .cast(),
+                model.schedulerBuilder("latestCompleteStateNexus")
+                        .withType(TaskSchedulerType.DIRECT)
                         .build()
                         .cast());
     }

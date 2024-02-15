@@ -21,6 +21,7 @@ import com.swirlds.common.platform.NodeId;
 import com.swirlds.platform.Consensus;
 import com.swirlds.platform.gossip.shadowgraph.Shadowgraph;
 import com.swirlds.platform.internal.EventImpl;
+import com.swirlds.platform.state.nexus.LatestCompleteStateNexus;
 import com.swirlds.platform.state.nexus.SignedStateNexus;
 import com.swirlds.platform.system.events.PlatformEvent;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -44,7 +45,7 @@ public final class GuiPlatformAccessor {
 
     private final Map<NodeId, Shadowgraph> shadowGraphs = new ConcurrentHashMap<>();
     private final Map<NodeId, AtomicReference<Consensus>> consensusReferences = new ConcurrentHashMap<>();
-    private final Map<NodeId, SignedStateNexus> latestCompleteStateComponents = new ConcurrentHashMap<>();
+    private final Map<NodeId, LatestCompleteStateNexus> latestCompleteStateComponents = new ConcurrentHashMap<>();
     private final Map<NodeId, SignedStateNexus> latestImmutableStateComponents = new ConcurrentHashMap<>();
 
     private static final GuiPlatformAccessor INSTANCE = new GuiPlatformAccessor();
@@ -183,7 +184,7 @@ public final class GuiPlatformAccessor {
      * @param latestCompleteState the latest complete state component
      */
     public void setLatestCompleteStateComponent(
-            @NonNull final NodeId nodeId, @NonNull final SignedStateNexus latestCompleteState) {
+            @NonNull final NodeId nodeId, @NonNull final LatestCompleteStateNexus latestCompleteState) {
         Objects.requireNonNull(nodeId, "nodeId must not be null");
         Objects.requireNonNull(latestCompleteState, "latestCompleteState must not be null");
         latestCompleteStateComponents.put(nodeId, latestCompleteState);
@@ -196,7 +197,7 @@ public final class GuiPlatformAccessor {
      * @return the latest complete state component
      */
     @Nullable
-    public SignedStateNexus getLatestCompleteStateComponent(@NonNull final NodeId nodeId) {
+    public LatestCompleteStateNexus getLatestCompleteStateComponent(@NonNull final NodeId nodeId) {
         Objects.requireNonNull(nodeId, "nodeId must not be null");
         return latestCompleteStateComponents.getOrDefault(nodeId, null);
     }

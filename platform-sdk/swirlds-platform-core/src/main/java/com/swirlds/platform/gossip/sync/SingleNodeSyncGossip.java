@@ -27,6 +27,7 @@ import com.swirlds.platform.crypto.KeysAndCerts;
 import com.swirlds.platform.gossip.AbstractGossip;
 import com.swirlds.platform.gossip.FallenBehindManagerImpl;
 import com.swirlds.platform.state.SwirldStateManager;
+import com.swirlds.platform.state.nexus.LatestCompleteStateNexus;
 import com.swirlds.platform.state.nexus.SignedStateNexus;
 import com.swirlds.platform.state.signed.SignedState;
 import com.swirlds.platform.system.SoftwareVersion;
@@ -72,7 +73,7 @@ public class SingleNodeSyncGossip extends AbstractGossip {
             @NonNull final SoftwareVersion appVersion,
             @NonNull final LongSupplier intakeQueueSizeSupplier,
             @NonNull final SwirldStateManager swirldStateManager,
-            @NonNull final SignedStateNexus latestCompleteState,
+            @NonNull final LatestCompleteStateNexus latestCompleteState,
             @NonNull final StatusActionSubmitter statusActionSubmitter,
             @NonNull final Consumer<SignedState> loadReconnectState,
             @NonNull final Runnable clearAllPipelinesForReconnect) {
