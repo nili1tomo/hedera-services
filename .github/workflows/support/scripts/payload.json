@@ -7,7 +7,7 @@
                         "type": "header",
                         "text": {
                           "type": "plain_text",
-                          "text": "Performance Nightly Test(c7c823e0)",
+                          "text": "Performance Nightly Test",
                           "emoji": true
                         }
                       },
@@ -33,7 +33,7 @@
                           },
                           {
                             "type": "mrkdwn",
-                            "text": "<https://preproduction.grafana.hedera-ops.com/d/network-details-prom/network-details-prometheus?orgId=1TEST_DASHBOARD_URLfrom=1707787960240TEST_DASHBOARD_URLto=1707789783078TEST_DASHBOARD_URLvar-Datasource=grafanacloud-promTEST_DASHBOARD_URLvar-Network=performance6|*2024-02-13 01:32:40 - 2024-02-13 02:03:03*>"
+                            "text": "<https://preproduction.grafana.hedera-ops.com/d/network-details-prom/network-details-prometheus?orgId=1TEST_DASHBOARD_URLfrom=1708243109428TEST_DASHBOARD_URLto=1708244931238TEST_DASHBOARD_URLvar-Datasource=grafanacloud-promTEST_DASHBOARD_URLvar-Network=performance6|*2024-02-18 07:58:29 - 2024-02-18 08:28:51*>"
                           },
                           {
                             "type": "mrkdwn",
@@ -41,7 +41,7 @@
                           },
                           {
                             "type": "mrkdwn",
-                            "text": "<https://preproduction.grafana.hedera-ops.com/d/network-details-prom/network-details-prometheus?orgId=1TEST_DASHBOARD_URLfrom=1707791375397TEST_DASHBOARD_URLto=1707793209359TEST_DASHBOARD_URLvar-Datasource=grafanacloud-promTEST_DASHBOARD_URLvar-Network=performance6|*2024-02-13 02:29:35 - 2024-02-13 03:00:09*>"
+                            "text": "<https://preproduction.grafana.hedera-ops.com/d/network-details-prom/network-details-prometheus?orgId=1TEST_DASHBOARD_URLfrom=1708246522830TEST_DASHBOARD_URLto=1708248354569TEST_DASHBOARD_URLvar-Datasource=grafanacloud-promTEST_DASHBOARD_URLvar-Network=performance6|*2024-02-18 08:55:22 - 2024-02-18 09:25:54*>"
                           },
                           {
                             "type": "mrkdwn",
@@ -49,7 +49,7 @@
                           },
                           {
                             "type": "mrkdwn",
-                            "text": "<https://preproduction.grafana.hedera-ops.com/d/network-details-prom/network-details-prometheus?orgId=1TEST_DASHBOARD_URLfrom=1707795418155TEST_DASHBOARD_URLto=1707799156003TEST_DASHBOARD_URLvar-Datasource=grafanacloud-promTEST_DASHBOARD_URLvar-Network=performance6|*2024-02-13 03:36:58 - 2024-02-13 04:39:16*>"
+                            "text": "<https://preproduction.grafana.hedera-ops.com/d/network-details-prom/network-details-prometheus?orgId=1TEST_DASHBOARD_URLfrom=1708250561164TEST_DASHBOARD_URLto=1708254296428TEST_DASHBOARD_URLvar-Datasource=grafanacloud-promTEST_DASHBOARD_URLvar-Network=performance6|*2024-02-18 10:02:41 - 2024-02-18 11:04:56*>"
                           }
                         ]
                       },
@@ -62,7 +62,7 @@
                           },
                           {
                             "type": "mrkdwn",
-                            "text": "<https://preproduction.grafana.hedera-ops.com/d/network-details-prom/network-details-prometheus?orgId=1TEST_DASHBOARD_URLfrom=1707801771707TEST_DASHBOARD_URLto=1707805395915TEST_DASHBOARD_URLvar-Datasource=grafanacloud-promTEST_DASHBOARD_URLvar-Network=performance6|*2024-02-13 05:22:51 - 2024-02-13 06:23:15*>"
+                            "text": "<https://preproduction.grafana.hedera-ops.com/d/network-details-prom/network-details-prometheus?orgId=1TEST_DASHBOARD_URLfrom=1708256910336TEST_DASHBOARD_URLto=1708260534063TEST_DASHBOARD_URLvar-Datasource=grafanacloud-promTEST_DASHBOARD_URLvar-Network=performance6|*2024-02-18 11:48:30 - 2024-02-18 12:48:54*>"
                           },
                           {
                             "type": "mrkdwn",
@@ -70,7 +70,7 @@
                           },
                           {
                             "type": "mrkdwn",
-                            "text": "<https://preproduction.grafana.hedera-ops.com/d/network-details-prom/network-details-prometheus?orgId=1TEST_DASHBOARD_URLfrom=1707807888958TEST_DASHBOARD_URLto=1707811529913TEST_DASHBOARD_URLvar-Datasource=grafanacloud-promTEST_DASHBOARD_URLvar-Network=performance6|*2024-02-13 07:04:48 - 2024-02-13 08:05:29*>"
+                            "text": "<https://preproduction.grafana.hedera-ops.com/d/network-details-prom/network-details-prometheus?orgId=1TEST_DASHBOARD_URLfrom=1708263026208TEST_DASHBOARD_URLto=1708266665709TEST_DASHBOARD_URLvar-Datasource=grafanacloud-promTEST_DASHBOARD_URLvar-Network=performance6|*2024-02-18 13:30:26 - 2024-02-18 14:31:05*>"
                           },
                           {
                             "type": "mrkdwn",
@@ -78,7 +78,7 @@
                           },
                           {
                             "type": "mrkdwn",
-                            "text": "<https://preproduction.grafana.hedera-ops.com/d/network-details-prom/network-details-prometheus?orgId=1TEST_DASHBOARD_URLfrom=1707814049588TEST_DASHBOARD_URLto=1707817674039TEST_DASHBOARD_URLvar-Datasource=grafanacloud-promTEST_DASHBOARD_URLvar-Network=performance6|*2024-02-13 08:47:29 - 2024-02-13 09:47:54*>"
+                            "text": "<https://preproduction.grafana.hedera-ops.com/d/network-details-prom/network-details-prometheus?orgId=1TEST_DASHBOARD_URLfrom=1708269179369TEST_DASHBOARD_URLto=1708272802895TEST_DASHBOARD_URLvar-Datasource=grafanacloud-promTEST_DASHBOARD_URLvar-Network=performance6|*2024-02-18 15:12:59 - 2024-02-18 16:13:22*>"
                           }
                         ]
                       },
@@ -91,7 +91,7 @@
                           },
                           {
                             "type": "mrkdwn",
-                            "text": "<https://preproduction.grafana.hedera-ops.com/d/network-details-prom/network-details-prometheus?orgId=1TEST_DASHBOARD_URLfrom=1707820166161TEST_DASHBOARD_URLto=1707823892847TEST_DASHBOARD_URLvar-Datasource=grafanacloud-promTEST_DASHBOARD_URLvar-Network=performance6|*2024-02-13 10:29:26 - 2024-02-13 11:31:32*>"
+                            "text": "<https://preproduction.grafana.hedera-ops.com/d/network-details-prom/network-details-prometheus?orgId=1TEST_DASHBOARD_URLfrom=1708275294980TEST_DASHBOARD_URLto=1708279021622TEST_DASHBOARD_URLvar-Datasource=grafanacloud-promTEST_DASHBOARD_URLvar-Network=performance6|*2024-02-18 16:54:54 - 2024-02-18 17:57:01*>"
                           },
                           {
                             "type": "mrkdwn",
@@ -99,7 +99,7 @@
                           },
                           {
                             "type": "mrkdwn",
-                            "text": "<https://preproduction.grafana.hedera-ops.com/d/network-details-prom/network-details-prometheus?orgId=1TEST_DASHBOARD_URLfrom=1707826493842TEST_DASHBOARD_URLto=1707830220843TEST_DASHBOARD_URLvar-Datasource=grafanacloud-promTEST_DASHBOARD_URLvar-Network=performance6|*2024-02-13 12:14:53 - 2024-02-13 13:17:00*>"
+                            "text": "<https://preproduction.grafana.hedera-ops.com/d/network-details-prom/network-details-prometheus?orgId=1TEST_DASHBOARD_URLfrom=1708281620241TEST_DASHBOARD_URLto=1708285346717TEST_DASHBOARD_URLvar-Datasource=grafanacloud-promTEST_DASHBOARD_URLvar-Network=performance6|*2024-02-18 18:40:20 - 2024-02-18 19:42:26*>"
                           },
                           {
                             "type": "mrkdwn",
@@ -107,7 +107,7 @@
                           },
                           {
                             "type": "mrkdwn",
-                            "text": "<https://preproduction.grafana.hedera-ops.com/d/network-details-prom/network-details-prometheus?orgId=1TEST_DASHBOARD_URLfrom=1707832824697TEST_DASHBOARD_URLto=1707836466092TEST_DASHBOARD_URLvar-Datasource=grafanacloud-promTEST_DASHBOARD_URLvar-Network=performance6|*2024-02-13 14:00:24 - 2024-02-13 15:01:06*>"
+                            "text": "<https://preproduction.grafana.hedera-ops.com/d/network-details-prom/network-details-prometheus?orgId=1TEST_DASHBOARD_URLfrom=1708287945215TEST_DASHBOARD_URLto=1708291584755TEST_DASHBOARD_URLvar-Datasource=grafanacloud-promTEST_DASHBOARD_URLvar-Network=performance6|*2024-02-18 20:25:45 - 2024-02-18 21:26:24*>"
                           }
                         ]
                       },
@@ -120,7 +120,7 @@
                           },
                           {
                             "type": "mrkdwn",
-                            "text": "<https://preproduction.grafana.hedera-ops.com/d/network-details-prom/network-details-prometheus?orgId=1TEST_DASHBOARD_URLfrom=1707838987085TEST_DASHBOARD_URLto=1707842613177TEST_DASHBOARD_URLvar-Datasource=grafanacloud-promTEST_DASHBOARD_URLvar-Network=performance6|*2024-02-13 15:43:07 - 2024-02-13 16:43:33*>"
+                            "text": "<https://preproduction.grafana.hedera-ops.com/d/network-details-prom/network-details-prometheus?orgId=1TEST_DASHBOARD_URLfrom=1708294098477TEST_DASHBOARD_URLto=1708297722626TEST_DASHBOARD_URLvar-Datasource=grafanacloud-promTEST_DASHBOARD_URLvar-Network=performance6|*2024-02-18 22:08:18 - 2024-02-18 23:08:42*>"
                           },
                           {
                             "type": "mrkdwn",
@@ -128,15 +128,7 @@
                           },
                           {
                             "type": "mrkdwn",
-                            "text": "<https://preproduction.grafana.hedera-ops.com/d/network-details-prom/network-details-prometheus?orgId=1TEST_DASHBOARD_URLfrom=1707845107511TEST_DASHBOARD_URLto=1707848752399TEST_DASHBOARD_URLvar-Datasource=grafanacloud-promTEST_DASHBOARD_URLvar-Network=performance6|*2024-02-13 17:25:07 - 2024-02-13 18:25:52*>"
-                          },
-                          {
-                            "type": "mrkdwn",
-                            "text": "*104k15m333*"
-                          },
-                          {
-                            "type": "mrkdwn",
-                            "text": "<https://preproduction.grafana.hedera-ops.com/d/network-details-prom/network-details-prometheus?orgId=1TEST_DASHBOARD_URLfrom=1707851272260TEST_DASHBOARD_URLto=1707855011855TEST_DASHBOARD_URLvar-Datasource=grafanacloud-promTEST_DASHBOARD_URLvar-Network=performance6|*2024-02-13 19:07:52 - 2024-02-13 20:10:11*>"
+                            "text": "<https://preproduction.grafana.hedera-ops.com/d/network-details-prom/network-details-prometheus?orgId=1TEST_DASHBOARD_URLfrom=1708300214503TEST_DASHBOARD_URLto=1708303853476TEST_DASHBOARD_URLvar-Datasource=grafanacloud-promTEST_DASHBOARD_URLvar-Network=performance6|*2024-02-18 23:50:14 - 2024-02-19 00:50:53*>"
                           }
                         ]
                       }

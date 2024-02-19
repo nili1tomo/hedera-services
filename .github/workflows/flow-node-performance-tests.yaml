@@ -17,6 +17,15 @@
 name: "Node: Performance Tests"
 on:
   workflow_dispatch:
+    inputs:
+      build_version:
+        description: 'Commit Hash'
+        required: true
+        default: 'custom'
+      jenkins_job:
+        description: 'Jenkins Job Number'
+        required: true
+        default: '0'
 
 defaults:
   run:
