@@ -215,7 +215,7 @@ public class HapiTestEnv {
                                         <AppenderRef ref="Console"/>
                                         <AppenderRef ref="TestClientRollingFile"/>
                                       </Logger>
-                                      """)
+                                    """)
                     .replace(
                             "output/",
                             workingDir.resolve("output").toAbsolutePath().normalize() + "/");
