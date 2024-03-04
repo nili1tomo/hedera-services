@@ -20,13 +20,23 @@ import static com.swirlds.platform.test.fixtures.event.EventUtils.staticDynamicV
 import static com.swirlds.platform.test.fixtures.event.EventUtils.weightedChoice;
 import static com.swirlds.platform.test.fixtures.event.RandomEventUtils.DEFAULT_FIRST_EVENT_TIME_CREATED;
 
+import com.swirlds.common.context.PlatformContext;
 import com.swirlds.common.platform.NodeId;
+import com.swirlds.common.test.fixtures.platform.TestPlatformContextBuilder;
+import com.swirlds.config.api.Configuration;
+import com.swirlds.config.extensions.test.fixtures.TestConfigBuilder;
+import com.swirlds.platform.ConsensusImpl;
+import com.swirlds.platform.consensus.ConsensusConfig;
+import com.swirlds.platform.consensus.ConsensusConfig_;
+import com.swirlds.platform.event.AncientMode;
+import com.swirlds.platform.eventhandling.EventConfig;
 import com.swirlds.platform.system.address.AddressBook;
 import com.swirlds.platform.test.fixtures.addressbook.RandomAddressBookGenerator;
 import com.swirlds.platform.test.fixtures.event.DynamicValue;
 import com.swirlds.platform.test.fixtures.event.DynamicValueGenerator;
 import com.swirlds.platform.test.fixtures.event.IndexedEvent;
 import com.swirlds.platform.test.fixtures.event.source.EventSource;
+import com.swirlds.platform.test.fixtures.metrics.NoOpConsensusMetrics;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -82,6 +92,16 @@ public class StandardGraphGenerator extends AbstractGraphGenerator<StandardGraph
     private NodeId previousCreatorId;
 
     /**
+     * The platform context needed for configuration of the ConsensusImpl.
+     */
+    private PlatformContext platformContext;
+
+    /**
+     * An internal consensus for determining an appropriate birth round for events.
+     */
+    private ConsensusImpl consensus;
+
+    /**
      * Construct a new StandardEventGenerator.
      *
      * Note: once an event source has been passed to this constructor it should not be modified by the outer context.
@@ -104,16 +124,15 @@ public class StandardGraphGenerator extends AbstractGraphGenerator<StandardGraph
      * 		One or more event sources.
      */
     public StandardGraphGenerator(final long seed, @NonNull final List<EventSource<?>> eventSources) {
-        super(seed);
-        Objects.requireNonNull(eventSources);
-
-        this.sources = eventSources;
-        if (eventSources.isEmpty()) {
-            throw new IllegalArgumentException("At least one event source is required");
-        }
-
-        buildAddressBookInitializeEventSources(eventSources);
-        buildDefaultOtherParentAffinityMatrix();
+        this(
+                TestPlatformContextBuilder.create()
+                        .withConfiguration(new TestConfigBuilder()
+                                .withValue(ConsensusConfig_.ROUNDS_EXPIRED, 500)
+                                .withValue(ConsensusConfig_.ROUNDS_NON_ANCIENT, 26)
+                                .getOrCreateConfig())
+                        .build(),
+                seed,
+                eventSources);
     }
 
     /**
@@ -123,12 +142,61 @@ public class StandardGraphGenerator extends AbstractGraphGenerator<StandardGraph
      * 		The random seed used to generate events.
      * @param eventSources
      * 		One or more event sources.
-     * @param addressBook
-     *         The address book to use with the event sources.
+     */
+    public StandardGraphGenerator(
+            @NonNull PlatformContext platformContext,
+            final long seed,
+            @NonNull final List<EventSource<?>> eventSources) {
+        super(seed);
+        this.platformContext = Objects.requireNonNull(platformContext);
+        Objects.requireNonNull(eventSources);
+
+        this.sources = eventSources;
+        if (eventSources.isEmpty()) {
+            throw new IllegalArgumentException("At least one event source is required");
+        }
+
+        buildAddressBookInitializeEventSources(eventSources);
+        buildDefaultOtherParentAffinityMatrix();
+        consensus = initializeInternalConsensus();
+    }
+
+    /**
+     * Construct a new StandardEventGenerator.
+     *
+     * @param seed         The random seed used to generate events.
+     * @param eventSources One or more event sources.
+     * @param addressBook  The address book to use with the event sources.
      */
     public StandardGraphGenerator(
             final long seed, @NonNull final List<EventSource<?>> eventSources, @NonNull final AddressBook addressBook) {
+        this(
+                TestPlatformContextBuilder.create()
+                        .withConfiguration(new TestConfigBuilder()
+                                .withValue(ConsensusConfig_.ROUNDS_EXPIRED, 500)
+                                .withValue(ConsensusConfig_.ROUNDS_NON_ANCIENT, 26)
+                                .getOrCreateConfig())
+                        .build(),
+                seed,
+                eventSources,
+                addressBook);
+    }
+
+    /**
+     * Construct a new StandardEventGenerator.
+     *
+     * @param platformContext the platform context
+     * @param seed            The random seed used to generate events.
+     * @param eventSources    One or more event sources.
+     * @param addressBook     The address book to use with the event sources.
+     */
+    public StandardGraphGenerator(
+            @NonNull PlatformContext platformContext,
+            final long seed,
+            @NonNull final List<EventSource<?>> eventSources,
+            @NonNull final AddressBook addressBook) {
         super(seed);
+        this.platformContext = Objects.requireNonNull(platformContext);
         Objects.requireNonNull(eventSources);
         Objects.requireNonNull(addressBook);
 
@@ -139,6 +207,7 @@ public class StandardGraphGenerator extends AbstractGraphGenerator<StandardGraph
 
         setAddressBookInitializeEventSources(eventSources, addressBook);
         buildDefaultOtherParentAffinityMatrix();
+        consensus = initializeInternalConsensus();
     }
 
     /**
@@ -164,6 +233,21 @@ public class StandardGraphGenerator extends AbstractGraphGenerator<StandardGraph
         this.eventPeriodMean = that.eventPeriodMean;
         this.eventPeriodStandardDeviation = that.eventPeriodStandardDeviation;
         this.simultaneousEventFraction = that.simultaneousEventFraction;
+        this.platformContext = that.platformContext;
+        this.consensus = initializeInternalConsensus();
+    }
+
+    /**
+     * Initialize the internal consensus with the settings from the platform context.
+     */
+    private ConsensusImpl initializeInternalConsensus() {
+
+        final Configuration config = platformContext.getConfiguration();
+
+        final ConsensusConfig consensusConfig = config.getConfigData(ConsensusConfig.class);
+        final AncientMode ancientMode = config.getConfigData(EventConfig.class).getAncientMode();
+
+        return new ConsensusImpl(consensusConfig, new NoOpConsensusMetrics(), addressBook, ancientMode);
     }
 
     /**
@@ -388,6 +472,7 @@ public class StandardGraphGenerator extends AbstractGraphGenerator<StandardGraph
         }
         previousTimestamp = null;
         previousCreatorId = null;
+        consensus = initializeInternalConsensus();
     }
 
     /**
@@ -455,9 +540,18 @@ public class StandardGraphGenerator extends AbstractGraphGenerator<StandardGraph
         final EventSource<?> source = getNextEventSource(eventIndex);
         final EventSource<?> otherParentSource = getNextOtherParentSource(eventIndex, source);
 
+        final long birthRound = consensus.getLastRoundDecided() + 1;
+
         final IndexedEvent next = source.generateEvent(
-                getRandom(), eventIndex, otherParentSource, getNextTimestamp(source, otherParentSource.getNodeId()));
+                getRandom(),
+                eventIndex,
+                otherParentSource,
+                getNextTimestamp(source, otherParentSource.getNodeId()),
+                birthRound);
         next.setGeneratorIndex(eventIndex);
+
+        // add the event to consensus to possibly advance the birthRound of the next event created.
+        consensus.addEvent(next);
 
         return next;
     }

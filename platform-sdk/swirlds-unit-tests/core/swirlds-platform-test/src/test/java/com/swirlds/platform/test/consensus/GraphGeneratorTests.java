@@ -161,15 +161,11 @@ public class GraphGeneratorTests {
     /**
      * Verify that a certain percent of events have a node as the other parent.
      *
-     * @param events
-     * 		A list of events.
-     * @param nodeId
-     * 		The node ID to check.
-     * @param expectedRatio
-     * 		The expected ratio (as a fraction of 1.0).
-     * @param tolerance
-     * 		The allowable tolerance. For example, a ratio of 0.25 with a tolerance of 0.01 will accept
-     * 		any value between 0.24 and 0.26.
+     * @param events        A list of events.
+     * @param nodeId        The node ID to check.
+     * @param expectedRatio The expected ratio (as a fraction of 1.0).
+     * @param tolerance     The allowable tolerance. For example, a ratio of 0.25 with a tolerance of 0.01 will accept
+     *                      any value between 0.24 and 0.26.
      */
     protected void verifyExpectedOtherParentRatio(
             final List<IndexedEvent> events, final NodeId nodeId, final double expectedRatio, final double tolerance) {
@@ -190,15 +186,11 @@ public class GraphGeneratorTests {
     /**
      * Verify that a certain percent of events originate from a given node.
      *
-     * @param events
-     * 		A list of events.
-     * @param nodeId
-     * 		The node ID to check.
-     * @param expectedRatio
-     * 		The expected ratio (as a fraction of 1.0).
-     * @param tolerance
-     * 		The allowable tolerance. For example, a ratio of 0.25 with a tolerance of 0.01 will accept
-     * 		any value between 0.24 and 0.26.
+     * @param events        A list of events.
+     * @param nodeId        The node ID to check.
+     * @param expectedRatio The expected ratio (as a fraction of 1.0).
+     * @param tolerance     The allowable tolerance. For example, a ratio of 0.25 with a tolerance of 0.01 will accept
+     *                      any value between 0.24 and 0.26.
      */
     protected void verifyExpectedParentRatio(
             final List<IndexedEvent> events, final NodeId nodeId, final double expectedRatio, final double tolerance) {
@@ -287,8 +279,8 @@ public class GraphGeneratorTests {
     }
 
     /**
-     * If given a StandardGraphGenerator or a ShuffledEventGenerator containing a StandardGraphGenerator, return
-     * the StandardGraphGenerator.
+     * If given a StandardGraphGenerator or a ShuffledEventGenerator containing a StandardGraphGenerator, return the
+     * StandardGraphGenerator.
      */
     private StandardGraphGenerator getBaseGenerator(final GraphGenerator<?> generator) {
         if (generator instanceof StandardGraphGenerator) {
@@ -447,6 +439,16 @@ public class GraphGeneratorTests {
         validateEventOrder(generator);
         validateCopyWithNewSeed(generator);
         validateMaxGeneration(generator);
+        validateBirthRoundAdvancing(generator);
+    }
+
+    public void validateBirthRoundAdvancing(final GraphGenerator<?> generator) {
+        final List<IndexedEvent> events = generator.generateEvents(100);
+        final IndexedEvent lastEvent = events.get(events.size() - 1);
+        final IndexedEvent firstEvent = events.get(0);
+        assertTrue(
+                lastEvent.getBirthRound() > firstEvent.getBirthRound(), "last event should have a higher birth round");
+        generator.reset();
     }
 
     /**
@@ -557,16 +559,12 @@ public class GraphGeneratorTests {
     /**
      * Utility method. Check that the age ratio is within expected bounds.
      *
-     * @param eventAges
-     * 		a map containing event ages
-     * @param age
-     * 		the age to check
-     * @param expectedRatio
-     * 		the expected ratio of the specified age
-     * @param tolerance
-     * 		the amount that the expected ratio may differ from the actual ratio. Given as a fraction of 1.0.
-     * 		A tolerance of 0.05 allows the actual ratio to be between the bounds (0.95 * expected) and
-     * 		(1.05 * expected).
+     * @param eventAges     a map containing event ages
+     * @param age           the age to check
+     * @param expectedRatio the expected ratio of the specified age
+     * @param tolerance     the amount that the expected ratio may differ from the actual ratio. Given as a fraction of
+     *                      1.0. A tolerance of 0.05 allows the actual ratio to be between the bounds (0.95 * expected)
+     *                      and (1.05 * expected).
      */
     private void assertAgeRatio(
             final Map<Integer, Integer> eventAges, final int age, final double expectedRatio, final double tolerance) {
@@ -594,8 +592,8 @@ public class GraphGeneratorTests {
     }
 
     /**
-     * Sometimes an other parent is chosen not to be the most recent event from a node. These tests
-     * verify that behavior.
+     * Sometimes an other parent is chosen not to be the most recent event from a node. These tests verify that
+     * behavior.
      */
     @Test
     @Tag(TestComponentTags.PLATFORM)
@@ -691,8 +689,8 @@ public class GraphGeneratorTests {
     }
 
     /**
-     * Sanity checks on creation timestamps for events, make sure fraction of events with repeating timestamps
-     * matches expected value.
+     * Sanity checks on creation timestamps for events, make sure fraction of events with repeating timestamps matches
+     * expected value.
      */
     @Test
     @Tag(TestComponentTags.PLATFORM)
