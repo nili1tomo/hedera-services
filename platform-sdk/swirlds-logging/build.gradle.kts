@@ -38,3 +38,7 @@ testModuleInfo {
     requires("com.swirlds.common.test.fixtures")
     requires("jakarta.inject")
 }
+
+tasks.compileJava { options.compilerArgs.add("-Xlint:-exports") }
+
+tasks.compileTestFixturesJava { options.compilerArgs.add("-Xlint:-exports") }
