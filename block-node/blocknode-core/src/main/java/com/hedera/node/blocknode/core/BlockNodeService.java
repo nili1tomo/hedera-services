@@ -25,10 +25,6 @@ import org.apache.logging.log4j.Logger;
 
 public class BlockNodeService // extends BlockServiceGrpc.BlockServiceImplBase
  {
-    private static final Logger logger = LogManager.getLogger(BlockNodeServer.class);
-
-    public BlockNodeService() {}
-
     //    @Override
     //    public StreamObserver<BlocksPutIfAbsentRequest> blocksPutIfAbsent(
     //            StreamObserver<BlocksPutIfAbsentResponse> responseObserver) {
@@ -56,4 +52,5 @@ public class BlockNodeService // extends BlockServiceGrpc.BlockServiceImplBase
     //            }
     //        };
     //    }
+
 }

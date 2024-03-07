@@ -80,7 +80,7 @@ module com.hedera.node.app {
     exports com.hedera.node.app.state.recordcache to
             com.swirlds.common;
     exports com.hedera.node.app.services to
-            com.swirlds.platform.core;
+            com.swirlds.platform.core, com.hedera.storage.blocknode.core;
     exports com.hedera.node.app.signature to
             com.hedera.node.app.test.fixtures;
     exports com.hedera.node.app.info to
@@ -99,4 +99,5 @@ module com.hedera.node.app {
             com.swirlds.common,
             com.swirlds.platform;
     exports com.hedera.node.app.validation;
+    exports com.hedera.node.app.grpc;
 }

@@ -33,4 +33,8 @@ public class ConfigProvider {
 
         this.configuration = builder.build();
     }
+
+    public Configuration getConfiguration() {
+        return configuration;
+    }
 }
